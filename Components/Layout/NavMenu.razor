@@ -1,0 +1,70 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Website_V1</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        @code{
+            List<string> page_names_client= remodel(orderer(Directory.GetFiles("./components/Pages","*.razor").ToList()));
+
+
+            static List<string> orderer(List<string> intake)
+            {
+                var progressor = new List<Tuple<DateTime, string>>();
+                foreach (var element in intake)
+                {
+                    FileInfo fi = new FileInfo(element);
+                    DateTime fileBorn = fi.CreationTime;
+                    progressor.Add(Tuple.Create(fileBorn, element));
+                }
+                var done = progressor.OrderBy(x => x.Item1).ToList();
+                
+                var end = new List<string>();
+                foreach(var element in done)
+                {
+                    end.Add(element.Item2);
+                }
+                return end;
+            }
+
+            static List<string> remodel(List<string> intake){
+                var val = new List<string>();
+                foreach(var element in intake)
+                {
+                    if(element.Contains("Home.razor") || element.Contains("Error.razor"))
+                    {
+                        continue; 
+                    }
+                    var trimed = element.Trim();
+                    trimed = trimed.Substring(trimed.IndexOf('\\')+1);
+                    trimed = trimed.Remove(trimed.Length - 6);
+                    
+                    val.Add(trimed);
+                }
+                return val;
+            }
+            
+        }
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href='' Match="NavLinkMatch.All">
+                <span class="bi bi-plus-square-fill-nav-menu Home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        @foreach (var naming in page_names_client)
+        {
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href='@naming'>
+                    <span class="bi bi-plus-square-fill-nav-menu @naming" aria-hidden="true"></span> @naming
+                </NavLink>
+            </div>
+        }
+
+    </nav>
+</div>
+

@@ -14,21 +14,17 @@
 
             static List<string> orderer(List<string> intake)
             {
-                var progressor = new List<Tuple<DateTime, string>>();
+                var progressor = new SortedDictionary<int,string>();
                 foreach (var element in intake)
                 {
-                    FileInfo fi = new FileInfo(element);
-                    DateTime fileBorn = fi.CreationTime;
-                    progressor.Add(Tuple.Create(fileBorn, element));
+                    string fetcher = "";
+                    using (StreamReader sr = new StreamReader(element))
+                    {
+                        fetcher += sr.ReadLine();
+                    }
+                    progressor.Add(Convert.ToInt32(fetcher.Trim().Remove(fetcher.Length - 2).Substring(2)), element);
                 }
-                var done = progressor.OrderBy(x => x.Item1).ToList();
-                
-                var end = new List<string>();
-                foreach(var element in done)
-                {
-                    end.Add(element.Item2);
-                }
-                return end;
+                return progressor.Values.ToList<string>();
             }
 
             static List<string> remodel(List<string> intake){
